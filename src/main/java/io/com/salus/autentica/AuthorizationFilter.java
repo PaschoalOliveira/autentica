@@ -15,23 +15,17 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import io.jsonwebtoken.Jwts;
 
-public class AuthorizationFilter extends BasicAuthenticationFilter
-{
-	public AuthorizationFilter(AuthenticationManager authenticationManager)
-	{
+public class AuthorizationFilter extends BasicAuthenticationFilter {
+	public AuthorizationFilter(AuthenticationManager authenticationManager) {
 		super(authenticationManager);
-
 	}
 
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws IOException, ServletException
-
-	{
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 		String header = request.getHeader("Authorization");
+	
 		if (header == null || !header.startsWith("Bearer")) {
 			filterChain.doFilter(request, response);
 			return;
-
 		}
 
 		UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(request);
@@ -42,26 +36,20 @@ public class AuthorizationFilter extends BasicAuthenticationFilter
 
 	}
 
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request)
-
-	{
+	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 
 		String token = request.getHeader("Authorization");
 
-		if (token != null)
-
-		{
+		if (token != null){
 
 			String user = Jwts.parser().setSigningKey("SecretKeyToGenJWTs".getBytes())
 					.parseClaimsJws(token.replace("Bearer", ""))
 					.getBody()
 					.getSubject();
 
-			if (user != null)
-			{
+			if (user != null){
 				return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
 			}
-
 			return null;
 
 		}

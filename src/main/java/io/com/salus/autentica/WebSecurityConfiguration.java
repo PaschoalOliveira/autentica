@@ -36,13 +36,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter
     };
 
 
-    public WebSecurityConfiguration(UserDetailsService userDetailsService)
-    {
+    public WebSecurityConfiguration(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
-    protected void configure(HttpSecurity httpSecurity) throws Exception
-    {
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
@@ -54,27 +52,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter
     }
 
 
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception
-
-    {
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(this.passwordEncoder());
-
     }
 
 
     @Bean
-
-    CorsConfigurationSource corsConfigurationSource()
-
-    {
+    CorsConfigurationSource corsConfigurationSource() {
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration("/**",new CorsConfiguration().applyPermitDefaultValues());
-
         return source;
-
     }
 
 }

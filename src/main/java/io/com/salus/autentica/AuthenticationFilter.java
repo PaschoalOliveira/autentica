@@ -21,41 +21,33 @@ import io.com.salus.autentica.model.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter
-{
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     private AuthenticationManager authenticationManager;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager)
-    {
+    public AuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
         setFilterProcessesUrl("/login");
     }
 
     @Override
-
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException
-    {
-        try
-        {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try{
             Usuario creds = new ObjectMapper().readValue(request.getInputStream(), Usuario.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException("Could not read request" + e);
+        } catch(IOException e) {
+            throw new RuntimeException("Could not read request " + e);
         }
     }
 
 
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication)
-    {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication) {
         String token = Jwts.builder()
                 .setSubject(((User) authentication.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
                 .signWith(SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
                 .compact();
         response.addHeader("Authorization","Bearer " + token);
-
     }
 
 }

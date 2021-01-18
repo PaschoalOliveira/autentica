@@ -10,36 +10,26 @@ import io.com.salus.autentica.model.Usuario;
 import io.com.salus.autentica.repository.UsuarioRepository;
 
 @RestController
-
 @RequestMapping(value = "/v1/users")
-
-public class UserController
-
-{
+public class UserController {
 
     private UsuarioRepository userRepository;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserController(UsuarioRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder)
-
-    {
+    public UserController(UsuarioRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         this.userRepository = userRepository;
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-
     }
+    
     @PostMapping("/signup")
-
-    public void signUp(@RequestBody Usuario user)
-
-    {
-
+    public void signUp(@RequestBody Usuario user) {
+    	
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
-
     }
 
 }
